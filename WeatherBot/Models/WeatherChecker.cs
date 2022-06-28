@@ -11,8 +11,8 @@ namespace WeatherBot
     public class WeatherChecker
     {
         private string RootUrl = "https://api.openweathermap.org/data/3.0/";
-        
-        private List<string> Locations { get; set; }
+        private Location PrimaryLocation { get; set; }
+        private List<Location> Locations { get; set; }
         private Dictionary<string, string> Settings { get; set; }
         private string SettingsPath = "../../settings.json";
         private string ApiKey;

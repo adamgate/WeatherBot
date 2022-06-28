@@ -11,30 +11,42 @@ namespace WeatherBot
         public static Task Main(string[] args) => new Program().MainAsync();
 
         private DiscordSocketClient _client;
+        private WeatherChecker weatherChecker;
 
+        /**
+         * <summary>
+         * Entry point of the program.
+         * </summary>
+         */
         public async Task MainAsync()
         {
             _client = new DiscordSocketClient();
-
             _client.Log += Log;
             
-            //Get token from file
-            var token = File.ReadAllText("../../token.txt");
-            
-            Console.WriteLine(token);
+            string token = File.ReadAllText("../../token.txt");
+            await Log(new LogMessage(LogSeverity.Debug, "Main", "Token read successfully"));
+
+            weatherChecker = new WeatherChecker();
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
+            
+            
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
         
-        private Task Log(LogMessage msg)
+        /**
+         * <summary>
+         * Logs a message to the console.
+         * </summary>
+         * <param name="msg">The message to be logged.</param>
+         */
+        private static Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
         }
-        
     }
 }

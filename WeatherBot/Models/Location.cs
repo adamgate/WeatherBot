@@ -1,26 +1,20 @@
-﻿using System;
-
-namespace WeatherBot
+﻿namespace WeatherBot.Models
 {
-    public class Location : IFormattable
+    public class Location
     {
         private string Name { get; set; }
-        private Tuple<float, float> Coordinates { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public Location(string name)
         {
-            this.Name = name;
+            Name = name;
             NameToCoordinates();
         }
         
         private void NameToCoordinates()
         {
-            //convert name to coordinates
-        }
             
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
         }
     }
 }

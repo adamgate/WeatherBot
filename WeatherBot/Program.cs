@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.WebSocket;
 
-namespace WeatherBot
+namespace WeatherBot.Models
 {
     internal class Program
     {
@@ -12,6 +13,7 @@ namespace WeatherBot
 
         private DiscordSocketClient _client;
         private WeatherChecker weatherChecker;
+        private static Timer timer;
 
         /**
          * <summary>
@@ -23,18 +25,37 @@ namespace WeatherBot
             _client = new DiscordSocketClient();
             _client.Log += Log;
             
-            string token = File.ReadAllText("../../token.txt");
+            var token = File.ReadAllText("../../token.txt");
             await Log(new LogMessage(LogSeverity.Debug, "Main", "Token read successfully"));
 
-            weatherChecker = new WeatherChecker();
+            weatherChecker = new WeatherChecker("Omaha, Nebraska");
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
             
+            SetTimer();
             
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
+        }
+        
+        private void SetTimer()
+        {
+            // timer = new Timer(1000*60*60*12); //12 hours in ms
+            timer = new Timer(10000);
+            
+            timer.Elapsed += async ( sender, e ) => await AnnounceWeather();
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            
+            timer.Start();
+        }
+
+        private Task AnnounceWeather()
+        {
+            Console.WriteLine(weatherChecker.GetWeather());
+            return Task.CompletedTask;
         }
         
         /**

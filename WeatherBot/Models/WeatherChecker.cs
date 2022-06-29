@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace WeatherBot
+namespace WeatherBot.Models
 {
     /**
      * <summary>
@@ -10,18 +13,13 @@ namespace WeatherBot
      */
     public class WeatherChecker
     {
-        private string RootUrl = "https://api.openweathermap.org/data/3.0/";
-        private Location PrimaryLocation { get; set; }
-        private List<Location> Locations { get; set; }
-        private Dictionary<string, string> Settings { get; set; }
-        private string SettingsPath = "../../settings.json";
+        private string RootUrl = "https://api.openweathermap.org/data/2.5/";
+        private Location Location;
         private string ApiKey;
-        private TimeZone TimeZone { get; set; }
-        private DateTime LastSuccessfulRequest { get; set; }
-        
-        public WeatherChecker()
+
+        public WeatherChecker(string location)
         {
-            ReadSettings();
+            Location = new Location(location);
             LoadApiKey();
         }
 
@@ -30,30 +28,22 @@ namespace WeatherBot
          * Entry point of the program.
          * </summary>
          */
-        public string GetWeather()
+        public async Task<string> GetWeather()
         {
+            HttpClient client = new HttpClient();
+            string query = $"{RootUrl}weather?lat={41.258652}&lon={-95.937187}&appid={ApiKey}";
+            Console.WriteLine($"Sending query: {query}");
+            string responseBody = await client.GetStringAsync(query);
+
+            Console.WriteLine($"Response body: {responseBody}");
+
             //assemble query and return data
-            return null;
+            return responseBody;
         }
 
         private void LoadApiKey()
         {
-            //read api key from file
-        }
-
-        private void ReadSettings()
-        {
-            //load settings from json file   
-            /*
-             * Settings:
-             * time zone
-             * 
-             */
-        }
-
-        private void WriteSettings()
-        {
-            //write settings to file
+            ApiKey = File.ReadAllText("../../apikey.txt");
         }
     }
 }

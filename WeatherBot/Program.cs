@@ -2,18 +2,22 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
+
 using Discord;
 using Discord.WebSocket;
+using Newtonsoft.Json;
+using WeatherBot.Models;
 
-namespace WeatherBot.Models
+namespace WeatherBot
 {
     internal class Program
     {
         public static Task Main(string[] args) => new Program().MainAsync();
 
-        private DiscordSocketClient _client;
-        private WeatherChecker weatherChecker;
-        private static Timer timer;
+        private static DiscordSocketClient _client = new DiscordSocketClient();
+        private static Timer _timer;
+        private WeatherChecker _weatherChecker;
+        private WeatherReport _report;
 
         /**
          * <summary>
@@ -22,13 +26,12 @@ namespace WeatherBot.Models
          */
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
             _client.Log += Log;
             
-            var token = File.ReadAllText("../../token.txt");
+            var token = File.ReadAllText(@"../../token.txt");
             await Log(new LogMessage(LogSeverity.Debug, "Main", "Token read successfully"));
 
-            weatherChecker = new WeatherChecker("Omaha, Nebraska");
+            _weatherChecker = new WeatherChecker("Omaha, Nebraska");
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
@@ -43,18 +46,21 @@ namespace WeatherBot.Models
         private void SetTimer()
         {
             // timer = new Timer(1000*60*60*12); //12 hours in ms
-            timer = new Timer(10000);
+            _timer = new Timer(10000);
             
-            timer.Elapsed += async ( sender, e ) => await AnnounceWeather();
-            timer.AutoReset = true;
-            timer.Enabled = true;
+            _timer.Elapsed += async ( sender, e ) => await AnnounceWeather();
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
             
-            timer.Start();
+            _timer.Start();
         }
 
         private Task AnnounceWeather()
         {
-            Console.WriteLine(weatherChecker.GetWeather());
+            var raw = _weatherChecker.GetWeather().Result;
+            Console.WriteLine(raw);
+            _report = JsonConvert.DeserializeObject<WeatherReport>(raw);
+     
             return Task.CompletedTask;
         }
         

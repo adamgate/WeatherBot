@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -25,17 +24,15 @@ namespace WeatherBot.Models
 
         /**
          * <summary>
-         * Entry point of the program.
+         * Queries OpenWeather API for the weather
          * </summary>
+         * <returns>OpenWeather API response</returns>
          */
         public async Task<string> GetWeather()
         {
             HttpClient client = new HttpClient();
             string query = $"{RootUrl}weather?lat={41.258652}&lon={-95.937187}&appid={ApiKey}";
-            Console.WriteLine($"Sending query: {query}");
             string responseBody = await client.GetStringAsync(query);
-
-            Console.WriteLine($"Response body: {responseBody}");
 
             //assemble query and return data
             return responseBody;

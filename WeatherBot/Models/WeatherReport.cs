@@ -1,45 +1,62 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace WeatherBot.Models
 {
     //Root class from OpenWeather JSON
-    public class WeatherReport
+    
+    [JsonObject("main")]
+    public class Temp
     {
-        public List<Weather> Weather { get; }
-        public Main Main { get; }
-        public int Visibility { get; }
-        public Wind Wind { get; }
-        public Sys Sys { get; }
-        public int Timezone { get; }
-
+        [JsonProperty("temp")]
+        public double MainTemp { get; set; }
+        
+        [JsonProperty("feels_like")]
+        public double FeelsLike { get; set; }
+        
+        [JsonProperty("temp_min")]
+        public double MinTemp { get; set; }
+        
+        [JsonProperty("temp_max")]
+        public double MaxTemp { get; set; }
+        
+        [JsonProperty("pressure")]
+        public int Pressure { get; set; }
+        
+        [JsonProperty("humidity")]
+        public int Humidity { get; set; }
     }
 
-    public class Main
+    public class WeatherReport
     {
-        public double Temp { get; }
-        public double FeelsLike { get; }
-        public double TempMin { get; }
-        public double TempMax { get; }
-        public int Pressue { get; }
-        public int Humidity { get; }
+        public List<Weather> Weather { get; set; }
+        
+        public Temp Main { get; set; }
+        public int Visibility { get; set; }
+        public int Dt { get; set; }
+        public Sys Sys { get; set; }
+        public int Timezone { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Cod { get; set; }
     }
 
     public class Sys
     {
-        public int Sunrise { get; }
-        public int Sunset { get; }
+        [JsonProperty("sunrise")]
+        public int Sunrise { get; set; }
+        
+        [JsonProperty("sunset")]
+        public int Sunset { get; set; }
     }
 
     public class Weather
     {
-        public string Main { get; }
-        public string Description { get; }
-    }
-
-    public class Wind
-    {
-        public double speed { get; }
-        public int deg { get; }
-        public double gust { get; }
+        [JsonProperty("main")]
+        public string TerseSky { get; set; }
+        
+        [JsonProperty("description")]
+        public string VerboseSky { get; set; }
     }
 }

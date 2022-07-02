@@ -30,19 +30,13 @@ namespace WeatherBot.Models
 
     public class WeatherReport
     {
-        public List<Weather> Weather { get; set; }
-        
+        public List<Sky> Weather { get; set; }
         public Temp Main { get; set; }
-        public int Visibility { get; set; }
-        public int Dt { get; set; }
-        public Sys Sys { get; set; }
-        public int Timezone { get; set; }
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Cod { get; set; }
+        public Daylight Sys { get; set; }
     }
 
-    public class Sys
+    [JsonObject("sys")]
+    public class Daylight
     {
         [JsonProperty("sunrise")]
         public int Sunrise { get; set; }
@@ -51,7 +45,8 @@ namespace WeatherBot.Models
         public int Sunset { get; set; }
     }
 
-    public class Weather
+    [JsonObject("weather")]
+    public class Sky
     {
         [JsonProperty("main")]
         public string TerseSky { get; set; }
